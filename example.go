@@ -1,12 +1,3 @@
-## Api library for Market Steam on Go (golang).
-## Installation
-
-To install marketapi, simply run:
-```
-$ go get github.com/soluchok/marketapi
-```
-## Example
-```go
 package main
 
 import (
@@ -26,7 +17,7 @@ func main() {
     fmt.Println(resp.Success)
     fmt.Println(resp.Ping)
 }
+
 // {"success":true,"ping":"pong"}
 // true
 // pong
-```
