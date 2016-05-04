@@ -1,3 +1,7 @@
+## Api library for Market Steam on Go (golang).
+
+## Example
+```go
 package main
 
 import (
@@ -17,7 +21,7 @@ func main() {
     fmt.Println(resp.Success)
     fmt.Println(resp.Ping)
 }
-
 // {"success":true,"ping":"pong"}
 // true
 // pong
+```
