@@ -10,6 +10,20 @@ const (
 )
 
 const (
+	ActDOTA2 = "dota2"
+	ActCSGO  = "csgo"
+	ActTF2   = "tf2"
+	ActGIFTS = "gifts"
+)
+
+const (
+	CodeDOTA2 = "570"
+	CodeCSGO  = "730"
+	CodeTF2   = "440"
+	CodeGIFTS = "753"
+)
+
+const (
 	URLDota2 = "https://market.dota2.net"
 	URLCsgo  = "https://market.csgo.com"
 	URLTf2   = "https://tf2.tm"
@@ -17,6 +31,8 @@ const (
 )
 
 const (
+	URLItemDBCurrent      = "%s/itemdb/current_%s.json"
+	URLItemDB             = "%s/itemdb/%s"
 	URLItemInfo           = "%s/api/ItemInfo/%s_%s/%s/?key=%s"
 	URLItemHistory        = "%s/api/ItemHistory/%s_%s/?key=%s"
 	URLMarketTrades       = "%s/api/MarketTrades/?key=%s"

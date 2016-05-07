@@ -1,9 +1,12 @@
 package marketapi
 
 import (
+	"bytes"
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -58,6 +61,119 @@ func makeGet(url string) ([]byte, error) {
 		return []byte{}, errors.New(apiResponse.Error())
 	}
 	return bytes, nil
+}
+
+func lineToStruct(action string, line []string) CsvLine {
+	switch action {
+	case ActDOTA2:
+		return CsvLine{
+			CClassID:      line[0],
+			CInstanceID:   line[1],
+			CPrice:        line[2],
+			COffers:       line[3],
+			CPopularity:   line[4],
+			CRarity:       line[5],
+			CQuality:      line[6],
+			CHeroID:       line[7],
+			CMarketName:   line[8],
+			CNameColor:    line[9],
+			CPriceUpdated: line[10],
+			CPop:          line[11],
+		}
+	case ActCSGO:
+		return CsvLine{
+			CClassID:      line[0],
+			CInstanceID:   line[1],
+			CPrice:        line[2],
+			COffers:       line[3],
+			CPopularity:   line[4],
+			CRarity:       line[5],
+			CQuality:      line[6],
+			CHeroID:       line[7],
+			CSlot:         line[8],
+			CStickers:     line[9],
+			CMarketName:   line[10],
+			CNameColor:    line[11],
+			CPriceUpdated: line[12],
+			CPop:          line[13],
+		}
+	case ActTF2:
+		return CsvLine{
+			CClassID:      line[0],
+			CInstanceID:   line[1],
+			CPrice:        line[2],
+			COffers:       line[3],
+			CPopularity:   line[4],
+			CRarity:       line[5],
+			CQuality:      line[6],
+			CHeroID:       line[7],
+			CCraftable:    line[8],
+			CLook:         line[9],
+			CCollection:   line[10],
+			CMarketName:   line[11],
+			CNameColor:    line[12],
+			CPriceUpdated: line[13],
+			CPop:          line[14],
+		}
+	case ActGIFTS:
+		return CsvLine{
+			CClassID:      line[0],
+			CInstanceID:   line[1],
+			CPrice:        line[2],
+			COffers:       line[3],
+			CPopularity:   line[4],
+			CRarity:       line[5],
+			CQuality:      line[6],
+			CHeroID:       line[7],
+			CSlot:         line[8],
+			COs:           line[9],
+			CFeatures:     line[10],
+			CRating:       line[11],
+			CMarketName:   line[12],
+			CNameColor:    line[13],
+			CPriceUpdated: line[14],
+			CPop:          line[15],
+		}
+	default:
+		panic(fmt.Sprintf("Action %s is not defined", action))
+	}
+}
+
+func (a *API) ItemDBCurrent() (APIItemDBCurrent, error) {
+	bytes, err := makeGet(fmt.Sprintf(URLItemDBCurrent, a.URL, a.Code))
+	if err != nil {
+		return APIItemDBCurrent{}, err
+	}
+	var apiItemDBCurrent APIItemDBCurrent
+	json.Unmarshal(bytes, &apiItemDBCurrent)
+	return apiItemDBCurrent, nil
+}
+
+func (a *API) ItemDB(dbname string) ([]CsvLine, error) {
+
+	body, err := makeGet(fmt.Sprintf(URLItemDB, a.URL, dbname))
+	if err != nil {
+		return []CsvLine{}, err
+	}
+	csvFile := bytes.NewBuffer(body)
+	csvf := csv.NewReader(csvFile)
+	csvf.LazyQuotes = true
+	csvf.Comma = ';'
+	csvf.TrailingComma = true
+	csvf.Read() // skip header row
+
+	var data []CsvLine
+	for {
+		fields, err := csvf.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			panic(err)
+		}
+		data = append(data, lineToStruct(a.Action, fields))
+	}
+	return data, nil
 }
 
 //ItemInfo - Информация и предложения о продаже конкретной вещи.
@@ -367,29 +483,13 @@ func (a *API) GetWSAuth() (APIGetWSAuth, error) {
 	return apiGetWSAuth, nil
 }
 
-func getURLByAction(action string) string {
-	switch action {
-	case "dota2":
-		return URLDota2
-	case "csgo":
-		return URLCsgo
-	case "tf2":
-		return URLTf2
-	case "gifts":
-		return URLGifts
-	default:
-		panic(fmt.Sprintf("Action %s is not defined", action))
-	}
-}
-
-func newAPI(key string, action string) (API, error) {
-	url := getURLByAction(action)
-
+func newAPI(key string, action string, url string, code string) (API, error) {
 	api := API{
 		Key:    key,
 		Action: action,
 		URL:    url,
 		Lang:   "ru",
+		Code:   code,
 	}
 
 	_, err := api.Test()
@@ -402,20 +502,20 @@ func newAPI(key string, action string) (API, error) {
 
 //NewDota2API - создание нового объекта API Dota2
 func NewDota2API(key string) (API, error) {
-	return newAPI(key, "dota2")
+	return newAPI(key, ActDOTA2, URLDota2, CodeDOTA2)
 }
 
 //NewCsgoAPI - создание нового объекта API Csgo
 func NewCsgoAPI(key string) (API, error) {
-	return newAPI(key, "csgo")
+	return newAPI(key, ActCSGO, URLCsgo, CodeCSGO)
 }
 
 //NewTf2API - создание нового объекта API Tf2
 func NewTf2API(key string) (API, error) {
-	return newAPI(key, "tf2")
+	return newAPI(key, ActTF2, URLTf2, CodeTF2)
 }
 
 //NewGiftsAPI - создание нового объекта API Gifts
 func NewGiftsAPI(key string) (API, error) {
-	return newAPI(key, "gifts")
+	return newAPI(key, ActGIFTS, URLGifts, CodeGIFTS)
 }

@@ -1,5 +1,33 @@
 package marketapi
 
+type APIItemDBCurrent struct {
+	Time int64  `json:"time"`
+	DB   string `json:"db"`
+}
+
+type CsvLine struct {
+	CClassID      string
+	CInstanceID   string
+	CPrice        string
+	COffers       string
+	CPopularity   string
+	CRarity       string
+	CQuality      string
+	CHeroID       string
+	CSlot         string //cs gifts
+	CStickers     string //cs
+	COs           string //gifts
+	CFeatures     string //gifts
+	CRating       string //gifts
+	CCraftable    string //tf2
+	CLook         string //tf2
+	CCollection   string //tf2
+	CMarketName   string
+	CNameColor    string
+	CPriceUpdated string
+	CPop          string
+}
+
 type Description struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
@@ -275,4 +303,5 @@ type API struct {
 	Action string
 	URL    string
 	Lang   string // ru or en
+	Code   string
 }
