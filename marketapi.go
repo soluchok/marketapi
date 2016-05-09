@@ -270,7 +270,6 @@ func (a *API) SetPrice(itemid string, price int64) (APISetPrice, error) {
 		return APISetPrice{}, errors.New(ErrAPIMinAmount)
 	}
 	bytes, err := makeGet(fmt.Sprintf(URLSetPrice, a.URL, itemid, price, a.Key))
-	fmt.Println(string(bytes))
 	if err != nil {
 		return APISetPrice{}, err
 	}
@@ -281,7 +280,6 @@ func (a *API) SetPrice(itemid string, price int64) (APISetPrice, error) {
 
 func (a *API) PingPong() (APIPingPong, error) {
 	bytes, err := makeGet(fmt.Sprintf(URLPingPong, a.URL, a.Key))
-	fmt.Println(string(bytes))
 	if err != nil {
 		return APIPingPong{}, err
 	}
@@ -292,12 +290,10 @@ func (a *API) PingPong() (APIPingPong, error) {
 
 func (a *API) ItemRequest(act string, botid string) (APIItemRequest, error) {
 	// act in or out
-	fmt.Println(fmt.Sprintf(URLItemRequest, a.URL, act, botid, a.Key))
 	bytes, err := makeGet(fmt.Sprintf(URLItemRequest, a.URL, act, botid, a.Key))
 	if err != nil {
 		return APIItemRequest{}, err
 	}
-	fmt.Println(string(bytes))
 	var apiItemRequest APIItemRequest
 	json.Unmarshal(bytes, &apiItemRequest)
 	return apiItemRequest, nil
