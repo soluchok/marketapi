@@ -1,10 +1,6 @@
 package marketapi
 
 const (
-	MinAmount = 100
-)
-
-const (
 	ErrAPITimeout   = "timeout"
 	ErrAPIMinAmount = "amount must be at least 100"
 )

@@ -243,9 +243,6 @@ func (a *API) Buy(classid string, instanceid string, price int64, hash string) (
 }
 
 func (a *API) SetPriceNew(classid string, instanceid string, price int64) (APISetPrice, error) {
-	if price < MinAmount {
-		return APISetPrice{}, errors.New(ErrAPIMinAmount)
-	}
 	bytes, err := makeGet(fmt.Sprintf(URLSetPriceNew, a.URL, classid, instanceid, price, a.Key))
 	if err != nil {
 		return APISetPrice{}, err
@@ -266,9 +263,6 @@ func (a *API) RemoveAll() (APIRemoveAll, error) {
 }
 
 func (a *API) SetPrice(itemid string, price int64) (APISetPrice, error) {
-	if price < MinAmount {
-		return APISetPrice{}, errors.New(ErrAPIMinAmount)
-	}
 	bytes, err := makeGet(fmt.Sprintf(URLSetPrice, a.URL, itemid, price, a.Key))
 	if err != nil {
 		return APISetPrice{}, err
