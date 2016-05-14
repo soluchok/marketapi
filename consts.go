@@ -6,10 +6,10 @@ const (
 )
 
 const (
-	ActDOTA2 = "dota2"
-	ActCSGO  = "csgo"
-	ActTF2   = "tf2"
-	ActGIFTS = "gifts"
+	ActDOTA2 = "cs"
+	ActCSGO  = "go"
+	ActTF2   = "tf"
+	ActGIFTS = "gt"
 )
 
 const (
