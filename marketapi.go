@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"reflect"
 	"strconv"
+	"sync"
 )
 
 func (i *Item) reload() {
@@ -42,7 +43,14 @@ func (r *APIResponse) Error() string {
 	return err + result
 }
 
+var mutex = &sync.Mutex{}
+
 func makeGet(url string) ([]byte, error) {
+	mutex.Lock()
+	defer func() {
+		mutex.Unlock()
+	}()
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return []byte{}, err
@@ -473,8 +481,8 @@ func (a *API) GetWSAuth() (APIGetWSAuth, error) {
 	return apiGetWSAuth, nil
 }
 
-func newAPI(key string, action string, url string, code string) (API, error) {
-	api := API{
+func newAPI(key string, action string, url string, code string) (*API, error) {
+	api := &API{
 		Key:    key,
 		Action: action,
 		URL:    url,
@@ -484,28 +492,28 @@ func newAPI(key string, action string, url string, code string) (API, error) {
 
 	_, err := api.Test()
 	if err != nil {
-		return API{}, err
+		return nil, err
 	}
 
 	return api, nil
 }
 
 //NewDota2API - создание нового объекта API Dota2
-func NewDota2API(key string) (API, error) {
+func NewDota2API(key string) (*API, error) {
 	return newAPI(key, ActDOTA2, URLDota2, CodeDOTA2)
 }
 
 //NewCsgoAPI - создание нового объекта API Csgo
-func NewCsgoAPI(key string) (API, error) {
+func NewCsgoAPI(key string) (*API, error) {
 	return newAPI(key, ActCSGO, URLCsgo, CodeCSGO)
 }
 
 //NewTf2API - создание нового объекта API Tf2
-func NewTf2API(key string) (API, error) {
+func NewTf2API(key string) (*API, error) {
 	return newAPI(key, ActTF2, URLTf2, CodeTF2)
 }
 
 //NewGiftsAPI - создание нового объекта API Gifts
-func NewGiftsAPI(key string) (API, error) {
+func NewGiftsAPI(key string) (*API, error) {
 	return newAPI(key, ActGIFTS, URLGifts, CodeGIFTS)
 }
